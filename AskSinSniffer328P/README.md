@@ -2,6 +2,12 @@
 
 Sketch für den Arduino (Pro Mini), um die Telegramme zu sniffen.
 
+## Erweiterung um die Möglichkeit Anzeige des aktuellen Signalpegel
+
+Dieser Fork bietet die Möglichkeit, ein 0.91" Dipsplay zu verwenden, um darauf den aktuellen Signalpegel
+anzuzeigen. Eine dynamische Pegelanzeige ist ebenfalls implementiert, um Ändereungen zu visualisieren.
+
+![AskSin-Analyzer Pegel](https://github.com/der-pw/AskSinAnalyzer/blob/master/Images/Sniffer_Display.jpg "AskSin-Analyzer Pegel")
 
 ## Flashen
 
