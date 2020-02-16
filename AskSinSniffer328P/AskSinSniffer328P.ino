@@ -11,6 +11,12 @@
 #include <Device.h>
 #include <Register.h>
 
+#include "Ssd1306.h"  // comment out if you use a 0.91" 128x32 OLED display
+
+#ifdef SSD1306_H_
+#define PEAK_THRESHOLD 3 // count the RSSI Polls for the peak threshold
+#endif
+
 #define RSSI_POLL_INTERVAL 750 //milliseconds
 
 // all library classes are placed in the namespace 'as'
@@ -32,6 +38,9 @@ class SnifferDevice : public Device<HalType, DefList0>, Alarm {
     DefList0 l0;
   public:
     typedef Device<HalType, DefList0> BaseDevice;
+#ifdef SSD1306_H_
+    DisplayType<3, 0x3C> display;
+#endif
     SnifferDevice (const DeviceInfo& i, uint16_t addr) : BaseDevice(i, addr, l0, 0), Alarm(0), l0(addr)  {}
     virtual ~SnifferDevice () {}
 
@@ -40,6 +49,9 @@ class SnifferDevice : public Device<HalType, DefList0>, Alarm {
       clock.add(*this);
       this->radio().pollRSSI();
       DPRINT(":"); DHEX(this->radio().rssi());DPRINTLN(";");
+#ifdef SSD1306_H_
+      display.printFull(this->radio().rssi());
+#endif
     }
 
     virtual bool process(Message& msg) {
@@ -73,10 +85,10 @@ SnifferDevice sdev(devinfo, 0x20);
 
 void setup () {
   DINIT(57600, ASKSIN_PLUS_PLUS_IDENTIFIER);
+#ifdef SSD1306_H_
+  sdev.display.init();
+#endif
   sdev.init(hal);
-  //hal.radio.initReg(CC1101_FREQ2, 0x21);
-  //hal.radio.initReg(CC1101_FREQ1, 0x65);
-  //hal.radio.initReg(CC1101_FREQ0, 0xCA);
 }
 
 void loop() {
