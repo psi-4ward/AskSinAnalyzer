@@ -57,8 +57,8 @@ class SnifferDevice : public Device<HalType, DefList0>, Alarm {
       cnt++;
       rssi_mean += this->radio().rssi();
       if (cnt >= RSSI_SERIAL_FACTOR) {
-        rssi_mean_val = rssi_mean / (cnt);
-        DPRINT(":");DPRINT(rssi_mean_val);DPRINTLN(";"); 
+        rssi_mean_val = rssi_mean / cnt;
+        DPRINT(":");DHEX(rssi_mean_val);DPRINTLN(";"); 
         cnt = 0;
         rssi_mean = 0;
       }
