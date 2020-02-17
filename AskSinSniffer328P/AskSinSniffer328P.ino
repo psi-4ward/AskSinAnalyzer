@@ -14,10 +14,11 @@
 #include "Ssd1306.h"  // comment out if you use a 0.91" 128x32 OLED display
 
 #ifdef SSD1306_H_
-#define PEAK_THRESHOLD 3 // count the RSSI Polls for the peak threshold
+#define PEAK_THRESHOLD 10 // count the RSSI Polls for the peak threshold
 #endif
 
-#define RSSI_POLL_INTERVAL 750 //milliseconds
+#define RSSI_POLL_INTERVAL 100 //milliseconds
+#define RSSI_SERIAL_FACTOR 5   // sends all RSSI_POLL_INTERVAL * RSSI_SERIAL_FACTOR  RSSI to Serial
 
 // all library classes are placed in the namespace 'as'
 using namespace as;
@@ -35,11 +36,16 @@ const struct DeviceInfo PROGMEM devinfo = {
 typedef AskSin<StatusLed<4>, NoBattery, Radio<LibSPI<10>, 2>> HalType;
 
 class SnifferDevice : public Device<HalType, DefList0>, Alarm {
-    DefList0 l0;
+  DefList0 l0;
+  
+  private: 
+    uint8_t cnt;
+    uint16_t rssi_mean;
+    uint8_t rssi_mean_val; 
   public:
     typedef Device<HalType, DefList0> BaseDevice;
 #ifdef SSD1306_H_
-    DisplayType<3, 0x3C> display;
+    DisplayType<PEAK_THRESHOLD, 0x3C> display;
 #endif
     SnifferDevice (const DeviceInfo& i, uint16_t addr) : BaseDevice(i, addr, l0, 0), Alarm(0), l0(addr)  {}
     virtual ~SnifferDevice () {}
@@ -48,7 +54,14 @@ class SnifferDevice : public Device<HalType, DefList0>, Alarm {
       set(millis2ticks(RSSI_POLL_INTERVAL));
       clock.add(*this);
       this->radio().pollRSSI();
-      DPRINT(":"); DHEX(this->radio().rssi());DPRINTLN(";");
+      cnt++;
+      rssi_mean += this->radio().rssi();
+      if (cnt >= RSSI_SERIAL_FACTOR) {
+        rssi_mean_val = rssi_mean / (cnt);
+        DPRINT(":");DPRINT(rssi_mean_val);DPRINTLN(";"); 
+        cnt = 0;
+        rssi_mean = 0;
+      }
 #ifdef SSD1306_H_
       display.printFull(this->radio().rssi());
 #endif

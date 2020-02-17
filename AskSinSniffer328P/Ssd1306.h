@@ -11,7 +11,7 @@
 #include <Adafruit_SSD1306.h>
 
 
-template <uint8_t PEAK_THRESHOLD, uint8_t ADDRESS = 0x3C>
+template <uint8_t PEAK_THRESH = 5, uint8_t ADDRESS = 0x3C>
 class DisplayType {
 private:
   Adafruit_SSD1306 d;
@@ -53,7 +53,7 @@ public:
     if (barh > 100) barh = 100;
     d.fillRect(12, 22+barh, 9, 101-barh, 1);    // an build the bar
 
-    if ((rssi < peakrssi) || (peakhold_thresh_val > PEAK_THRESHOLD)) {   // peakhold
+    if ((rssi < peakrssi) || (peakhold_thresh_val > PEAK_THRESH)) {   // peakhold
       peakrssi = rssi;
       peakhold_val = barh;
       peakhold_thresh_val = 1;
