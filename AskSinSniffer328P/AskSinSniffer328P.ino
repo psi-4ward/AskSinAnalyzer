@@ -14,11 +14,11 @@
 #include "Ssd1306.h"  // comment out if you use a 0.91" 128x32 OLED display
 
 #ifdef SSD1306_H_
-#define PEAK_THRESHOLD 10 // count the RSSI Polls for the peak threshold
+#define PEAK_THRESHOLD 5 // count the RSSI Polls for the peak threshold
 #endif
 
-#define RSSI_POLL_INTERVAL 100 //milliseconds
-#define RSSI_SERIAL_FACTOR 5   // sends all RSSI_POLL_INTERVAL * RSSI_SERIAL_FACTOR  RSSI to Serial
+#define RSSI_POLL_INTERVAL 200 // poll every x milliseconds
+#define RSSI_SERIAL_FACTOR 5   // sends all RSSI_POLL_INTERVAL * RSSI_SERIAL_FACTOR the lowest RSSI to Serial
 
 // all library classes are placed in the namespace 'as'
 using namespace as;
@@ -40,8 +40,8 @@ class SnifferDevice : public Device<HalType, DefList0>, Alarm {
   
   private: 
     uint8_t cnt;
-    uint16_t rssi_mean;
-    uint8_t rssi_mean_val; 
+    uint8_t rssi_peak;
+    uint8_t rssi_act; 
   public:
     typedef Device<HalType, DefList0> BaseDevice;
 #ifdef SSD1306_H_
@@ -55,12 +55,15 @@ class SnifferDevice : public Device<HalType, DefList0>, Alarm {
       clock.add(*this);
       this->radio().pollRSSI();
       cnt++;
-      rssi_mean += this->radio().rssi();
+      rssi_act = this->radio().rssi();
+      if (rssi_act < rssi_peak) {
+        rssi_peak = rssi_act;
+      }
       if (cnt >= RSSI_SERIAL_FACTOR) {
-        rssi_mean_val = rssi_mean / cnt;
-        DPRINT(":");DHEX(rssi_mean_val);DPRINTLN(";"); 
+        DPRINT(":");DHEX(rssi_peak);DPRINTLN(";"); 
         cnt = 0;
-        rssi_mean = 0;
+        rssi_act = 0;
+        rssi_peak = 199;
       }
 #ifdef SSD1306_H_
       display.printFull(this->radio().rssi());
