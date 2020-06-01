@@ -31,19 +31,19 @@ Dem Projekt liegt eine `platformio.ini` bei.
 Um die Bibliotheken zu laden, den Sketch zu kompilieren und hochzuladen, reicht ein Command:
 
 ```bash
-// Für Arduino Pro-Mini (328P)
-platformio run -e pro8MHzatmega328 -t upload
+# Für Arduino Pro-Mini (328P)
+pio run -e pro8MHzatmega328 -t upload
 
-// Für Ardino Nano (zB AskSin-Analyzer-XS PCB von TomMajor)
-platformio run -e nano -t upload
+# Für Ardino Nano (zB AskSin-Analyzer-XS PCB von TomMajor)
+pio run -e nano -t upload
 
-// Für Arduino Nano mit OLED-Display
-platformio run -e nano-oled -t upload
+# Für Arduino Nano mit OLED-Display
+pio run -e nano-oled -t upload
 ```
 
 ```bash
 # Serial monitor
-platformio device monitor
+pio device monitor
 ```
 
 
