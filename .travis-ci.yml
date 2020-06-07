@@ -1,0 +1,13 @@
+language: python
+python:
+    - "3.8"
+
+sudo: false
+
+install:
+    - pip install -U platformio
+    - platformio update
+
+script:
+    - platformio run -e promini -e promini-oled -e nano -e nano-oled
+

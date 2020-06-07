@@ -1,20 +1,68 @@
-# AskSinAnalyzer
+# AskSinSniffer328P
 
-❗ **Achtung:** Vor einem Update unbedingt das [CHANGELOG](https://github.com/jp112sdl/AskSinAnalyzer/blob/master/CHANGELOG.md) lesen!
+Sketch für den Arduino (Pro Mini, Nano), um Telegramme für den
+[AskSin Analyzer](https://github.com/jp112sdl/AskSinAnalyzer) oder
+[AskSin Analyzer XS](https://github.com/psi-4ward/AskSinAnalyzerXS) zu sniffen.
+
+Dieser Fork von [AskSinSniffer328P](https://github.com/jp112sdl/AskSinAnalyzer/tree/master/AskSinSniffer328P)
+bietet die Möglichkeit, ein 0.91" Dipsplay zu verwenden, um darauf den aktuellen Signalpegel
+anzuzeigen. Eine dynamische Pegelanzeige ist ebenfalls implementiert, um Ändereungen zu visualisieren.
+
+Zudem wird der Arduino Nano unterstützt.
+
+![AskSin-Analyzer Pegel](https://github.com/der-pw/AskSinAnalyzer/blob/master/Images/Sniffer_Display.jpg "AskSin-Analyzer Pegel")
 
 
+## Flashen
 
-<img src="Images/sample1.jpg" width=400 /><img src="Images/web_main.png" width=400 /><br/>
+Es gibt verschiedene Möglichkeiten, den Sketch zu flashen.
+Grundlagen können auf [asksinpp.de](https://asksinpp.de/Grundlagen/02_software.html) nachgelsesen werden.  
+Eine Anpassung der `DeviceInfo` Konfiguration ist **nicht** notwendig, da der Sniffer nicht an einer CCU angelernt wird.
 
-### Der Funktelegramm-Dekodierer für den Einsatz in HomeMatic Umgebungen! 
-### Perfekt zur Fehlersuche, wenn der DC mal wieder ins Unermessliche steigt _(WER sendet denn hier dauernd an WEN?)_ oder Störern, wenn sich wieder mal ein Gerät in einer Reboot-Schleife befindet. 
-### Nähere Informationen findet ihr im [Wiki](https://github.com/jp112sdl/AskSinAnalyzer/wiki)!
-und im Diskussions-Thread des [HomeMatic Forums](https://homematic-forum.de/forum/viewtopic.php?f=76&t=51161)
+### Arduino IDE
 
-**:point_right: Siehe auch [AskSinAnalyzerXS](https://github.com/psi-4ward/AskSinAnalyzerXS), der Analyzer als Desktop-App ohne ESP und Display.**
+Benötigte Bibliotheken: `AskSinPP`, `Low-Power`, `EnableInterrupt` und bei Verwendung des OLED-Displays `Adafruit GFX Library` und `Adafruit SSD1306`.
 
-<img src="Images/proto1.jpg" height=200 /> <img src="Images/proto2.jpg" height=200 /> <img src="Images/proto3.jpg" height=200 />
-<br/>
-<img src="Images/RSSI_Single1.jpg" height=200 /> <img src="Images/RSSI_Single2.jpg" height=200 /> <img src="Images/RSSI_NormalBar.jpeg" height=200 />
-<br/>
-Prototyp
+### avrdude
+
+Direktes Flashen der HEX-Datei über avrdude für einen 328P:
+```bash
+avrdude -patmega328p -carduino -P/dev/ttyUSB0 -b57600 -D -Uflash:w:AskSinSniffer328P.hex:i
+```
+
+### PlatformIO
+
+Dem Projekt liegt eine `platformio.ini` bei.
+
+Um die Bibliotheken zu laden, den Sketch zu kompilieren und hochzuladen, reicht ein einziger Befehl:
+
+```bash
+# Für Arduino Pro-Mini (328P)
+pio run -e promini -t upload
+
+# Für Arduino Pro-Mini mit OLED
+pio run -e promini-oled -t upload
+
+# Für Ardino Nano (zB AskSin-Analyzer-XS PCB von TomMajor)
+pio run -e nano -t upload
+
+# Für Arduino Nano mit OLED-Display
+pio run -e nano-oled -t upload
+```
+
+```bash
+# Serial monitor
+pio device monitor
+```
+
+
+## Authors
+
+* [Jérôme Pech](https://github.com/jp112sdl)
+* [Patrick Wulfert](https://github.com/der-pw)
+* [Christoph Wiechert](https://github.com/der-pw)
+
+
+## License
+
+CC BY-NC-SA 3.0
